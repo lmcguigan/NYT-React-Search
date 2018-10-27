@@ -1,0 +1,9 @@
+.navbar-brand, h1, h2, h3, h4, h5, button, p, input{
+    font-family: 'Comfortaa', cursive;
+    color: #333333;
+}
+.navbar{
+    background-color: #2f505a;
+    width: 100%;
+    box-shadow: 0px 5px 10px;
+}
