@@ -2,12 +2,11 @@ import axios from "axios";
 
 export default {
   getArticlesFromSearch: function (topic, start, end) {
-    var queryParams = { "api-key": "b9f91d369ff59547cd47b931d8cbc56b:0:74623931" };
     queryParams.q = topic;
     queryParams.begin_date = start + "0101";
     queryParams.end_date = end + "0101";
-    console.log("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b9f91d369ff59547cd47b931d8cbc56b:0:74623931&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date)
-    return axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b9f91d369ff59547cd47b931d8cbc56b:0:74623931&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date);
+    console.log("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + process.env.nyt + "&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date)
+    return axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + process.env.nyt + "&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date);
   },
   getArticles: function () {
     return axios.get("/api/articles");
