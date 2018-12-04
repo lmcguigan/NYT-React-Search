@@ -1,0 +1,5 @@
+@media only screen and (max-width: 925px) {
+   .form-control {
+        font-size: 12px;
+    }
+}

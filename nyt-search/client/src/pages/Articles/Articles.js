@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-//import DeleteBtn from "../../components/DeleteBtn";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
 import ArticleHolder from "../../components/ArticleHolder"
@@ -11,6 +10,7 @@ import DeleteNoteBtn from "../../components/DeleteNoteBtn";
 import AddNoteBtn from "../../components/AddNoteBtn";
 import { Input, TextArea, FormBtn } from "../../components/Form";
 import { ModalContainer, Modal } from "../../components/Modal";
+import "./Articles.css";
 
 class Articles extends Component {
   state = {
@@ -31,6 +31,7 @@ class Articles extends Component {
   }
 
   loadArticles = () => {
+    console.log(this.state);
     API.getArticles()
       .then(res =>
         this.setState({ savedArticles: res.data })
@@ -39,24 +40,30 @@ class Articles extends Component {
   };
 
   searchArticles = () => {
-    console.log(this.state);
     API.getArticlesFromSearch(this.state.topic, this.state.startyear, this.state.endyear)
       .then(res =>
-        //console.log(res.data.response.docs)
         this.setState({ searchedArticles: res.data.response.docs })
       )
       .catch(err => console.log(err));
   };
 
-  saveArticle = (headline, byline, url, pub_date) => {
+  saveArticle = (headline, byline, url, pub_date, articleID) => {
     API.saveArticle({
       title: headline,
       author: byline,
       link: url,
       date: pub_date
     })
-      .then(res => this.loadArticles())
+      .then(res => this.loadArticles(), this.removeParentDiv(articleID))
       .catch(err => console.log(err))
+  };
+
+  removeParentDiv = (articleID) => {
+    console.log(articleID);
+    console.log("item-" + articleID);
+    const targetedListItem = document.getElementById("item-" + articleID);
+    console.log(targetedListItem);
+    targetedListItem.parentNode.removeChild(targetedListItem);
   };
 
   deleteArticle = id => {
@@ -88,7 +95,6 @@ class Articles extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    console.log(this.state);
     if (this.state.topic && this.state.startyear && this.state.endyear) {
       this.searchArticles()
     }
@@ -130,8 +136,9 @@ class Articles extends Component {
     this.deleteNote(id);
   };
 
-  handleSave = (headline, byline, url, pub_date) => {
-    this.saveArticle(headline, byline, url, pub_date);
+  handleSave = (headline, byline, url, pub_date, articleID) => {
+    console.log(articleID);
+    this.saveArticle(headline, byline, url, pub_date, articleID)
   };
 
   handleModalShow = (articleTitle, articleID) => {
@@ -149,7 +156,7 @@ class Articles extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col size="12 sm-3" clName="searchcol">
+          <Col size="12 md-3" clName="searchcol">
             <form>
               <Input name="topic" placeholder="Topic (required)" onChange={this.handleInputChange} />
               <Input name="startdate" placeholder="Start Year (required)" onChange={this.handleInputChange} />
@@ -157,28 +164,35 @@ class Articles extends Component {
               <FormBtn onClick={this.handleFormSubmit}>Search</FormBtn>
             </form>
           </Col>
-          <Col size="12 sm-9" clName="green">
+          <Col size="12 md-9" clName="green">
             <Row>
               <Col size="12" >
                 <ArticleHolder type="Search Results">
                   {this.state.searchedArticles.length ? (
                     <List>
                       {this.state.searchedArticles.slice(0, 5).map(article => {
+                        let articleID = article._id;
                         let headline = article.headline.main;
-                        let byline = article.byline.original;
+                        let byline
+                        if (article.byline === undefined) {
+                          byline = "No byline"
+                        }
+                        else {
+                          byline = article.byline.original
+                        }
                         let url = article.web_url;
                         let pub_date = article.pub_date.slice(0, 10);
                         return (
-                          <ListItem key={article._id}>
+                          <ListItem key={article._id} id={`item-${article._id}`}>
                             <Row>
                               <Col size="6">
                                 <h4>{article.headline.main}</h4>
-                                <h5>{article.byline.original}</h5>
+                                <h5>{article.byline ? (article.byline.original) : <div></div>}</h5>
                                 <a href={article.web_url}>Link</a>
                                 <p>{article.pub_date.slice(0, 10)}</p>
                               </Col>
                               <Col size="6" clName="btn-holder">
-                                <SaveBtn onClick={() => this.handleSave(headline, byline, url, pub_date)} id={article._id} />
+                                <SaveBtn onClick={() => this.handleSave(headline, byline, url, pub_date, articleID)} id={article._id} />
                               </Col>
                             </Row>
                           </ListItem>
@@ -200,15 +214,15 @@ class Articles extends Component {
                     <List>
                       {this.state.savedArticles.map(article => {
                         return (
-                          <ListItem key={article._id}>
+                          <ListItem key={article._id} id={`item-${article._id}`}>
                             <Row>
-                              <Col size="6" clName="col-lg-8">
+                              <Col size="8" clName="col-sm-9 col-md-6">
                                 <h4>{article.title}</h4>
                                 <h5>{article.author}</h5>
                                 <a href={article.link}>Link</a>
                                 <p>Published: {article.date.slice(0, 10)}</p>
                               </Col>
-                              <Col size="6" clName="col-lg-4 btn-holder">
+                              <Col size="4" clName="col-sm-3 col-md-6 btn-holder">
                                 <DeleteBtn onClick={() => this.handleDelete(article._id)} id={article._id} />
                                 <AddNoteBtn onClick={() => this.handleModalShow(article.title, article._id)} />
                               </Col>
@@ -218,7 +232,6 @@ class Articles extends Component {
                                 <Col size="12" clName="note-holder">
                                   <h4>Notes:</h4>
                                   {article.notes.map(note => {
-                                    console.log(note);
                                     return (
                                       <NoteBox key={note._id}>
                                         <Col size="6" clName="col-lg-8">

@@ -1,0 +1,22 @@
+.btn {
+    font-size: 0.70rem;
+}
+
+@media only screen and (min-width: 485px) {
+    .btn {
+        font-size: 0.85rem;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .btn {
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+@media only screen and (max-width: 321px) {
+    .btn {
+        font-size: 0.5rem;
+        padding: 0.3rem 0.4rem;
+    }
+}

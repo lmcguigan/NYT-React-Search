@@ -1,3 +1,9 @@
 .delete-btn {
   margin-right: 1rem;
 }
+@media only screen and (max-width: 765px){
+  .delete-btn{
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}

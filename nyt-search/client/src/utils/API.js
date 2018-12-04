@@ -2,10 +2,10 @@ import axios from "axios";
 
 export default {
   getArticlesFromSearch: function (topic, start, end) {
+    let queryParams = {};
     queryParams.q = topic;
     queryParams.begin_date = start + "0101";
     queryParams.end_date = end + "0101";
-    console.log("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + process.env.nyt + "&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date)
     return axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + process.env.nyt + "&q=" + queryParams.q + "&begin_date=" + queryParams.begin_date + "&end_date=" + queryParams.end_date);
   },
   getArticles: function () {
